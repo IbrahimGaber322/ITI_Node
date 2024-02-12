@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <% if(todo){ %>
+        <main>
+            <div class="jumbotron d-flex flex-column">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <input type="checkbox" <%=JSON.parse(todo.status) ? 'checked' : '' %>
+                            onchange="toggleStatus('<%= JSON.stringify(todo) %>')">
+                        </div>
+                    </div>
+                    <input id="title" type="text" class="form-control" placeholder="<%=todo.title %>">
+                </div>
+                <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Description</span>
+                    </div>
+                    <textarea id="desc" class="form-control" placeholder="<%=todo.desc%>"></textarea>
+                </div>
+                <button onclick="updateTodo('<%= JSON.stringify(todo) %>' )" type="button"
+                    class="btn btn-info m-auto">Update</button>
+            </div>
+        </main>
+        <% } %>
+            <footer>
+                <%- include('../partials/footer'); %>
+            </footer>
+
+
+</body>
+
+</html>

@@ -1,0 +1,6 @@
+{
+    "CodeGPT.apiKey": "CodeGPT Plus Beta",
+    "emmet.includeLanguages": {
+        "ejs": "html",
+    },
+}

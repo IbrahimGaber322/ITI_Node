@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+        <div class="jumbotron">
+            <h1 class="text-center">Todos</h1>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <button onclick="addTodo()" class="btn btn-outline-secondary" type="button">Add</button>
+                </div>
+                <input id="title" type="text" class="form-control" placeholder="Title">
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Description</span>
+                </div>
+                <textarea id="desc" class="form-control"></textarea>
+            </div>
+            <ul id="list" class="list-group">
+                <% todos.forEach(todo=> { %>
+                    <li id="<%= todo.id %>" class="list-group-item m-1">
+                        <div class="custom-control custom-checkbox d-flex align-items-center">
+                            <input <%=JSON.parse(todo.status) ? 'checked' : '' %> id="checkbox_<%= todo.id %>"
+                                class="custom-control-input" type="checkbox"
+                                onchange="toggleStatus('<%= JSON.stringify(todo) %>')" />
+                                    <label style="font-weight: 900;" class="custom-control-label"
+                                        for="checkbox_<%= todo.id %>">
+                                        <%= todo.title %>
+                                    </label>
+                                    <button class="btn btn-success ml-auto"
+                                        onclick="location.href = '/<%=todo.id%>'">Details</button>
+                                    <button class="btn btn-danger ml-2"
+                                        onclick="deleteTodo('<%= todo.id %>')">Delete</button>
+                        </div>
+                    </li>
+                    <% }); %>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,87 @@
+<p class="text-center text-muted">&copy; Copyright 2024 Brhm</p>
+
+
+
+<script>
+    const title = document.getElementById("title");
+    const desc = document.getElementById("desc");
+
+    async function toggleStatus(todo) {
+        console.log(todo);
+        todo = JSON.parse(todo);
+        try {
+
+            const response = await fetch(`/api/todos/${todo.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ todo: { status: !todo.status } })
+            });
+            if (!response.ok) {
+                throw new Error('Failed to update todo status');
+            }
+            location.reload();
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function deleteTodo(id) {
+        try {
+            const response = await fetch(`/api/todos/${id}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            console.log(response.ok);
+            if (!response.ok) {
+                throw new Error('Failed to delete todo status');
+            }
+            location.reload();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function addTodo() {
+        try {
+            const response = await fetch(`/api/todos`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ todo: { title: title?.value, desc: desc?.value, status: false } })
+            })
+            if (!response.ok) {
+                throw new Error('Failed to add todo status');
+            }
+            location.reload();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function updateTodo(todo) {
+        todo = JSON.parse(todo);
+        try {
+            const response = await fetch(`/api/todos/${todo.id}`, {
+                method: "PATCH",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ todo: { ...todo, title: title?.value || todo.title, desc: desc?.value || todo.desc } })
+            })
+            console.log(todo);
+            console.log(desc.value, title.value);
+            if (!response.ok) {
+                throw new Error('Failed to update todo');
+            }
+            location.reload();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+</script>
