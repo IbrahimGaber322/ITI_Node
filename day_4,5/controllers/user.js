@@ -2,15 +2,15 @@ import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Todo from "../models/todo.js";
-
+import dotenv from "dotenv";
+dotenv.config();
+const JWT_KEY = process.env.JWT_KEY;
 export const signUp = async (req, res) => {
   const { username, firstName, lastName, password, dob } = req.body;
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser)
-      return res
-        .status(400)
-        .json({ message: "This username is already used." });
+      return res.status(400).json("This username is already used.");
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await User.create({
@@ -21,11 +21,13 @@ export const signUp = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = jwt.sign({ userId: user._id }, "test", { expiresIn: "5min" });
+    const token = jwt.sign({ userId: user._id }, JWT_KEY, {
+      expiresIn: "30min",
+    });
 
     res.status(200).json({ token });
   } catch (error) {
-    res.status(500).json("database error");
+    res.status(500).json("Failed to sign-up.");
   }
 };
 
@@ -35,23 +37,23 @@ export const signIn = async (req, res) => {
   try {
     const foundUser = await User.findOne({ username });
     if (!foundUser) {
-      return res.status(404).json({ message: "User doesn't exist." });
+      return res.status(404).json("User doesn't exist.");
     } else {
-      const { firstName, lastName, password: dbPass, dob } = foundUser;
+      const { password: dbPass } = foundUser;
 
       const passwordValidate = await bcrypt.compare(password, dbPass);
       if (!passwordValidate)
-        return res.status(400).json({ message: "Password is incorrect." });
+        return res.status(400).json("Password is incorrect.");
 
-      const token = jwt.sign({ userId: foundUser._id }, "test", {
-        expiresIn: "5min",
+      const token = jwt.sign({ userId: foundUser._id }, JWT_KEY, {
+        expiresIn: "30min",
       });
 
       res.status(200).json({ token });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json("database error");
+    res.status(500).json("Failed to log-in.");
   }
 };
 
@@ -65,7 +67,7 @@ export const editUser = async (req, res) => {
 
     res.status(200).json({ editedUser });
   } catch (error) {
-    res.status(500).json("database error");
+    res.status(500).json("Failed to edit user.");
   }
 };
 
@@ -76,7 +78,7 @@ export const getUser = async (req, res) => {
     if (!user) return res.json(404);
     res.json(user);
   } catch (error) {
-    res.status(500).json("database error");
+    res.status(500).json("Failed to fetch user info.");
   }
 };
 
@@ -85,7 +87,7 @@ export const getUsers = async (req, res) => {
     const userNames = await User.find().select("username");
     res.json(userNames);
   } catch (error) {
-    res.status(500).json("database error");
+    res.status(500).json("Failed to fetch users.");
   }
 };
 export const deleteUser = async (req, res) => {
@@ -95,7 +97,7 @@ export const deleteUser = async (req, res) => {
     if (!res.ok) return res.json(404);
     res.json(200);
   } catch (error) {
-    res.status(500).json("database error");
+    res.status(500).json("Failed to delete user.");
   }
 };
 
@@ -105,7 +107,6 @@ export const getUserTodos = async () => {
     const todos = await Todo.find({ userId: id });
     res.json(todos);
   } catch (error) {
-    res.status(500).json("database error");
+    res.status(500).json("Failed to get user's todos.");
   }
 };
-

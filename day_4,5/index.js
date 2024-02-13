@@ -14,14 +14,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Routes
-
 app.use("/todos", todoRoutes);
 app.use("/users", userRoutes);
 
-// Start the server
 mongoose
-  .connect(DATABASE_URL, {dbName:"ITI"})
+  .connect(DATABASE_URL, { dbName: "ITI" })
   .then(() => {
     app.listen(SERVER_PORT, () => {
       console.log(`Server listening on port ${SERVER_PORT}`);
